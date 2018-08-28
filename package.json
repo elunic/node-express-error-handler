@@ -1,0 +1,30 @@
+{
+  "name": "@elunic/express-error-handler",
+  "version": "0.0.1",
+  "description": "A simple, minimalistic error handler middleware for Express",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx jasmine test.js"
+  },
+  "keywords": [],
+  "author": {
+    "name": "William Hefter",
+    "email": "wh@elunic.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "common-errors": "^1.0.5",
+    "debug": "^3.1.0",
+    "http-errors": "^1.7.0",
+    "supports-color": "^5.5.0"
+  },
+  "devDependencies": {
+    "express": "^4.16.3",
+    "jasmine": "^3.2.0",
+    "supertest": "^3.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/elunic/node-express-error-handler.git"
+  }
+}
