@@ -1,6 +1,6 @@
 {
   "name": "@elunic/express-error-handler",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A simple, minimalistic error handler middleware for Express",
   "main": "index.js",
   "scripts": {
