@@ -35,10 +35,6 @@ Response body:
 
 - [Installation](#installation)
 - [Usage](#usage)
-  * [Child namespaces](#child-namespaces)
-  * [Global API](#global-api)
-  * [Per-logger log level](#per-logger-log-level)
-  * [Environment variables](#environment-variables)
 - [License](#license)
 
 
