@@ -19,7 +19,7 @@ module.exports = (
         debug('handling error', err);
         onError && onError(err);
 
-        if (err instanceof errors.ArgumentError) {
+        if (err instanceof errors.ArgumentError || err.name === 'ArgumentError') {
             err = httpErrors(400, err);
         }
 
