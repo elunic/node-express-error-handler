@@ -1,5 +1,7 @@
 # @elunic/express-error-handler
 
+[![Build Status](https://travis-ci.org/elunic/node-express-error-handler.svg?branch=master)](https://travis-ci.org/elunic/node-express-error-handler)
+
 A simple, minimalistic error handler middleware for Express.
 
 Support `http-errors` and has very partial support for some errors from `common-errors`.
