@@ -36,6 +36,15 @@ describe('express-error-handler', function() {
         app.get('/argument-error', (req, res) => {
             throw new errors.ArgumentError('Invalid argument');
         });
+
+        // Thrown by the `ow` package, for example [wh]
+        app.get('/custom-error', (req, res) => {
+            const err = new Error('Custom error');
+
+            err.name = 'CustomError';
+
+            throw err;
+        });
     });
 
     describe('sparse mode, no full output', function() {
@@ -110,6 +119,18 @@ describe('express-error-handler', function() {
                 .expect(400, {
                     error: {
                         type: 'ArgumentError',
+                    },
+                })
+                .expect('Content-Type', 'application/json; charset=utf-8', done)
+            ;
+        });
+
+        it('should return status 400 and JSON with type CustomError', function(done) {
+            request(app)
+                .get('/custom-error')
+                .expect(500, {
+                    error: {
+                        type: 'CustomError',
                     },
                 })
                 .expect('Content-Type', 'application/json; charset=utf-8', done)
@@ -212,6 +233,23 @@ describe('express-error-handler', function() {
                     }));
                 })
             ;
+        });
+
+        it('should return status 400 and JSON with type CustomError, message Invalid Argument, stack', function() {
+            return request(app)
+                .get('/custom-error')
+                .expect(500)
+                .expect('Content-Type', 'application/json; charset=utf-8')
+                .then((res) => {
+                    expect(res.body).toEqual(jasmine.objectContaining({
+                        error: jasmine.objectContaining({
+                            type: 'CustomError',
+                            message: 'Custom error',
+                            stack: jasmine.any(String),
+                        }),
+                    }));
+                })
+                ;
         });
     });
 

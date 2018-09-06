@@ -26,7 +26,7 @@ module.exports = (
         if (err instanceof httpErrors.HttpError || (err instanceof Error && err.statusCode)) {
             return res.status(err.statusCode).json({
                 error: {
-                    type: err.constructor.name,
+                    type: err.name,
                     code: err.code,
                     message: full ? err.message : undefined,
                     stack: full ? err.stack : undefined,
@@ -37,7 +37,7 @@ module.exports = (
         if (err instanceof Error) {
             return res.status(500).json({
                 error: {
-                    type: err.constructor.name,
+                    type: err.name,
                     code: err.code,
                     message: full ? err.message : undefined,
                     stack: full ? err.stack : undefined,
