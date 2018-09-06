@@ -4,7 +4,8 @@
   "description": "A simple, minimalistic error handler middleware for Express",
   "main": "index.js",
   "scripts": {
-    "test": "npx jasmine test.js"
+    "test": "npx jasmine test.js",
+    "test-dev": "npx nodemon --exec \"npx\" -e js jasmine test.js"
   },
   "keywords": [],
   "author": {
@@ -21,6 +22,7 @@
   "devDependencies": {
     "express": "^4.16.3",
     "jasmine": "^3.2.0",
+    "nodemon": "^1.18.4",
     "supertest": "^3.1.0"
   },
   "repository": {
