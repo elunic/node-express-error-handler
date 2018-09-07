@@ -37,6 +37,26 @@ describe('express-error-handler', function() {
             throw new errors.ArgumentError('Invalid argument');
         });
 
+        app.get('/custom-argument-error', (req, res) => {
+            const err = new Error('Custom ArgumentError');
+
+            err.name = 'ArgumentError';
+
+            throw err;
+        });
+
+        app.get('/notfound-error', (req, res) => {
+            throw new errors.NotFoundError('Not found');
+        });
+
+        app.get('/custom-notfound-error', (req, res) => {
+            const err = new Error('Custom NotFoundError');
+
+            err.name = 'NotFoundError';
+
+            throw err;
+        });
+
         // Thrown by the `ow` package, for example [wh]
         app.get('/custom-error', (req, res) => {
             const err = new Error('Custom error');
@@ -125,12 +145,48 @@ describe('express-error-handler', function() {
             ;
         });
 
+        it('should return status 400 and JSON with custom type ArgumentError', function(done) {
+            request(app)
+                .get('/custom-argument-error')
+                .expect(400, {
+                    error: {
+                        type: 'ArgumentError',
+                    },
+                })
+                .expect('Content-Type', 'application/json; charset=utf-8', done)
+            ;
+        });
+
         it('should return status 400 and JSON with type CustomError', function(done) {
             request(app)
                 .get('/custom-error')
                 .expect(500, {
                     error: {
                         type: 'CustomError',
+                    },
+                })
+                .expect('Content-Type', 'application/json; charset=utf-8', done)
+            ;
+        });
+
+        it('should return status 404 and JSON with type NotFoundError', function(done) {
+            request(app)
+                .get('/notfound-error')
+                .expect(404, {
+                    error: {
+                        type: 'NotFoundError',
+                    },
+                })
+                .expect('Content-Type', 'application/json; charset=utf-8', done)
+            ;
+        });
+
+        it('should return status 404 and JSON with custom type NotFoundError', function(done) {
+            request(app)
+                .get('/custom-notfound-error')
+                .expect(404, {
+                    error: {
+                        type: 'NotFoundError',
                     },
                 })
                 .expect('Content-Type', 'application/json; charset=utf-8', done)
@@ -235,6 +291,23 @@ describe('express-error-handler', function() {
             ;
         });
 
+        it('should return status 400 and JSON with custom type ArgumentError, message Invalid Argument, stack', function() {
+            return request(app)
+                .get('/argument-error')
+                .expect(400)
+                .expect('Content-Type', 'application/json; charset=utf-8')
+                .then((res) => {
+                    expect(res.body).toEqual(jasmine.objectContaining({
+                        error: jasmine.objectContaining({
+                            type: 'ArgumentError',
+                            message: 'Invalid or missing argument supplied: Invalid argument',
+                            stack: jasmine.any(String),
+                        }),
+                    }));
+                })
+                ;
+        });
+
         it('should return status 400 and JSON with type CustomError, message Invalid Argument, stack', function() {
             return request(app)
                 .get('/custom-error')
@@ -245,6 +318,40 @@ describe('express-error-handler', function() {
                         error: jasmine.objectContaining({
                             type: 'CustomError',
                             message: 'Custom error',
+                            stack: jasmine.any(String),
+                        }),
+                    }));
+                })
+                ;
+        });
+
+        it('should return status 404 and JSON with type NotFoundError, message Invalid Argument, stack', function() {
+            return request(app)
+                .get('/notfound-error')
+                .expect(404)
+                .expect('Content-Type', 'application/json; charset=utf-8')
+                .then((res) => {
+                    expect(res.body).toEqual(jasmine.objectContaining({
+                        error: jasmine.objectContaining({
+                            type: 'NotFoundError',
+                            message: 'Not Found: "Not found"',
+                            stack: jasmine.any(String),
+                        }),
+                    }));
+                })
+                ;
+        });
+
+        it('should return status 400 and JSON with custom type ArgumentError, message Invalid Argument, stack', function() {
+            return request(app)
+                .get('/custom-notfound-error')
+                .expect(404)
+                .expect('Content-Type', 'application/json; charset=utf-8')
+                .then((res) => {
+                    expect(res.body).toEqual(jasmine.objectContaining({
+                        error: jasmine.objectContaining({
+                            type: 'NotFoundError',
+                            message: 'Custom NotFoundError',
                             stack: jasmine.any(String),
                         }),
                     }));

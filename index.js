@@ -21,6 +21,8 @@ module.exports = (
 
         if (err instanceof errors.ArgumentError || err.name === 'ArgumentError') {
             err = httpErrors(400, err);
+        } else if (err instanceof errors.NotFoundError || err.name === 'NotFoundError') {
+            err = httpErrors(404, err);
         }
 
         if (err instanceof httpErrors.HttpError || (err instanceof Error && err.statusCode)) {
