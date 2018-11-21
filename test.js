@@ -36,7 +36,6 @@ describe('express-error-handler', function() {
         app.get('/argument-error', (req, res) => {
             throw new errors.ArgumentError('Invalid argument');
         });
-
         app.get('/custom-argument-error', (req, res) => {
             const err = new Error('Custom ArgumentError');
 
@@ -45,10 +44,42 @@ describe('express-error-handler', function() {
             throw err;
         });
 
+        app.get('/validation-error', (req, res) => {
+            throw new errors.ValidationError('Invalid schema');
+        });
+        app.get('/custom-validation-error', (req, res) => {
+            const err = new Error('Custom ValidationError');
+
+            err.name = 'ValidationError';
+
+            throw err;
+        });
+
+        app.get('/authentication-required-error', (req, res) => {
+            throw new errors.AuthenticationRequiredError('Unauthorized');
+        });
+        app.get('/custom-authentication-required-error', (req, res) => {
+            const err = new Error('Custom AuthenticationRequiredError');
+
+            err.name = 'AuthenticationRequiredError';
+
+            throw err;
+        });
+
+        app.get('/notpermitted-error', (req, res) => {
+            throw new errors.NotPermittedError('Forbidden');
+        });
+        app.get('/custom-notpermitted-error', (req, res) => {
+            const err = new Error('Custom NotPermittedError');
+
+            err.name = 'NotPermittedError';
+
+            throw err;
+        });
+
         app.get('/notfound-error', (req, res) => {
             throw new errors.NotFoundError('Not found');
         });
-
         app.get('/custom-notfound-error', (req, res) => {
             const err = new Error('Custom NotFoundError');
 
@@ -157,6 +188,78 @@ describe('express-error-handler', function() {
             ;
         });
 
+        it('should return status 400 and JSON with type ValidationError', function(done) {
+            request(app)
+                .get('/validation-error')
+                .expect(400, {
+                    error: {
+                        type: 'ValidationError',
+                    },
+                })
+                .expect('Content-Type', 'application/json; charset=utf-8', done)
+            ;
+        });
+
+        it('should return status 400 and JSON with custom type ValidationError', function(done) {
+            request(app)
+                .get('/custom-validation-error')
+                .expect(400, {
+                    error: {
+                        type: 'ValidationError',
+                    },
+                })
+                .expect('Content-Type', 'application/json; charset=utf-8', done)
+            ;
+        });
+
+        it('should return status 401 and JSON with type AuthenticationRequiredError', function(done) {
+            request(app)
+                .get('/authentication-required-error')
+                .expect(401, {
+                    error: {
+                        type: 'AuthenticationRequiredError',
+                    },
+                })
+                .expect('Content-Type', 'application/json; charset=utf-8', done)
+            ;
+        });
+
+        it('should return status 401 and JSON with custom type AuthenticationRequiredError', function(done) {
+            request(app)
+                .get('/custom-authentication-required-error')
+                .expect(401, {
+                    error: {
+                        type: 'AuthenticationRequiredError',
+                    },
+                })
+                .expect('Content-Type', 'application/json; charset=utf-8', done)
+            ;
+        });
+
+        it('should return status 403 and JSON with type NotPermittedError', function(done) {
+            request(app)
+                .get('/notpermitted-error')
+                .expect(403, {
+                    error: {
+                        type: 'NotPermittedError',
+                    },
+                })
+                .expect('Content-Type', 'application/json; charset=utf-8', done)
+            ;
+        });
+
+        it('should return status 403 and JSON with custom type NotPermittedError', function(done) {
+            request(app)
+                .get('/custom-notpermitted-error')
+                .expect(403, {
+                    error: {
+                        type: 'NotPermittedError',
+                    },
+                })
+                .expect('Content-Type', 'application/json; charset=utf-8', done)
+            ;
+        });
+
         it('should return status 400 and JSON with type CustomError', function(done) {
             request(app)
                 .get('/custom-error')
@@ -240,91 +343,6 @@ describe('express-error-handler', function() {
                 })
             ;
         });
-
-        it('should return status 401 and JSON with type Error, message Unauthorized, no stack', function() {
-            return request(app)
-                .get('/err-with-statuscode-401')
-                .expect(401)
-                .expect('Content-Type', 'application/json; charset=utf-8')
-                .then((res) => {
-                    expect(res.body).toEqual(jasmine.objectContaining({
-                        error: jasmine.objectContaining({
-                            type: 'Error',
-                            message: 'Unauthorized',
-                        }),
-                    }));
-                })
-            ;
-        });
-
-        it('should return status 400 and JSON with type Error, message Generic Error, no stack', function() {
-            return request(app)
-                .get('/generic-error')
-                .expect(500)
-                .expect('Content-Type', 'application/json; charset=utf-8')
-                .then((res) => {
-                    expect(res.body).toEqual(jasmine.objectContaining({
-                        error: jasmine.objectContaining({
-                            type: 'Error',
-                            message: 'Generic Error',
-                            stack: jasmine.any(String),
-                        }),
-                    }));
-                })
-            ;
-        });
-
-        it('should return status 400 and JSON with type ArgumentError, message Invalid Argument, stack', function() {
-            return request(app)
-                .get('/argument-error')
-                .expect(400)
-                .expect('Content-Type', 'application/json; charset=utf-8')
-                .then((res) => {
-                    expect(res.body).toEqual(jasmine.objectContaining({
-                        error: jasmine.objectContaining({
-                            type: 'ArgumentError',
-                            message: 'Invalid or missing argument supplied: Invalid argument',
-                            stack: jasmine.any(String),
-                        }),
-                    }));
-                })
-            ;
-        });
-
-        it('should return status 400 and JSON with custom type ArgumentError, message Invalid Argument, stack', function() {
-            return request(app)
-                .get('/argument-error')
-                .expect(400)
-                .expect('Content-Type', 'application/json; charset=utf-8')
-                .then((res) => {
-                    expect(res.body).toEqual(jasmine.objectContaining({
-                        error: jasmine.objectContaining({
-                            type: 'ArgumentError',
-                            message: 'Invalid or missing argument supplied: Invalid argument',
-                            stack: jasmine.any(String),
-                        }),
-                    }));
-                })
-                ;
-        });
-
-        it('should return status 400 and JSON with type CustomError, message Invalid Argument, stack', function() {
-            return request(app)
-                .get('/custom-error')
-                .expect(500)
-                .expect('Content-Type', 'application/json; charset=utf-8')
-                .then((res) => {
-                    expect(res.body).toEqual(jasmine.objectContaining({
-                        error: jasmine.objectContaining({
-                            type: 'CustomError',
-                            message: 'Custom error',
-                            stack: jasmine.any(String),
-                        }),
-                    }));
-                })
-                ;
-        });
-
         it('should return status 404 and JSON with type NotFoundError, message Invalid Argument, stack', function() {
             return request(app)
                 .get('/notfound-error')

@@ -19,8 +19,23 @@ module.exports = (
         debug('handling error', err);
         onError && onError(err);
 
-        if (err instanceof errors.ArgumentError || err.name === 'ArgumentError') {
+        if (
+            err instanceof errors.ArgumentError
+            || err.name === 'ArgumentError'
+            || err instanceof errors.ValidationError
+            || err.name === 'ValidationError'
+        ) {
             err = httpErrors(400, err);
+        } else if (
+            err instanceof errors.AuthenticationRequiredError
+            || err.name === 'AuthenticationRequiredError'
+        ) {
+            err = httpErrors(401, err);
+        } else if (
+            err instanceof errors.NotPermittedError
+            || err.name === 'NotPermittedError'
+        ) {
+            err = httpErrors(403, err);
         } else if (err instanceof errors.NotFoundError || err.name === 'NotFoundError') {
             err = httpErrors(404, err);
         }
