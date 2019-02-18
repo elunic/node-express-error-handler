@@ -7,6 +7,8 @@ import * as httpErrors from 'http-errors';
 
 const debug = Debug('@elunic/express-error-handler');
 
+exports = module.exports = errorHandler;
+
 /**
  *
  * @param {boolean} full Full output mode, outputs error stacks/messages.
